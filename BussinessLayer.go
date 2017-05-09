@@ -17,21 +17,16 @@ func SaveKycDetails(stub shim.ChaincodeStubInterface, args []string) ([]byte, er
 	var err error
 	var ok bool
 
-	if len(args) != 4 {
-		return nil, errors.New("Incorrect number of arguments. Need 4 argument")
+	if len(args) != 5 {
+		return nil, errors.New("Incorrect number of arguments. Need 5 argument")
 	}
-
-	//hardcoded KYC information
-	KycDetails.KYC_INFO_1 = "Kyc Information For Bank1"
-	KycDetails.KYC_INFO_2 = "Kyc Information For Bank2"
-	KycDetails.KYC_INFO_3 = "Kyc Information For Bank3"
-	KycDetails.KYC_INFO_4 = "Kyc Information For Bank4"
 
 	//get data from middle layer
 	KycDetails.USER_ID = args[0]
 	KycDetails.KYC_BANK_NAME = args[1]
 	KycDetails.USER_NAME = args[2]
 	KycDetails.KYC_DOC_BLOB = args[3]
+	KycDetails.KYC_INFO = args[4]
 	CurrentDate := time.Now().Local()
 	KycDetails.KYC_CREATE_DATE = CurrentDate.Format("02 Jan 2006")
 	KycDetails.KYC_VALID_TILL_DATE = CurrentDate.AddDate(2, 0, -1).Format("02 Jan 2006")
@@ -83,8 +78,8 @@ func GetAllKyc(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) 
 	var KycList []KycData
 	var KycDetails KycData
 
-	if len(args) != 0 {
-		return nil, errors.New("Incorrect number of arguments. Need 0 argument")
+	if len(args) != 1 {
+		return nil, errors.New("Incorrect number of arguments. Need 1 argument")
 	}
 	BankList, err := GetBankList(stub)
 	if err != nil {
@@ -96,7 +91,7 @@ func GetAllKyc(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) 
 	for _, BankName := range BankList {
 		UserList, _ := GetUserList(stub, BankName)
 		for _, UserId := range UserList {
-			KycDetails, _ = GetKYCDetails(stub, UserId)
+			KycDetails, _ = GetBankSpecificKYCDetails(stub, UserId, BankName)
 			KycList = append(KycList, KycDetails)
 		}
 	}
@@ -111,13 +106,14 @@ func GetKycByUserId(stub shim.ChaincodeStubInterface, args []string) ([]byte, er
 	var KycDetails KycData
 	var err error
 
-	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Need 1 argument")
+	if len(args) != 2 {
+		return nil, errors.New("Incorrect number of arguments. Need 2 argument")
 	}
 
 	//get data from middle layer
 	UserId := args[0]
-	KycDetails, err = GetKYCDetails(stub, UserId)
+	BankName := args[1]
+	KycDetails, err = GetBankSpecificKYCDetails(stub, UserId, BankName)
 	if err != nil {
 		JsonAsBytes1, _ := json.Marshal("User not exist")
 		return JsonAsBytes1, err
