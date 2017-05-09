@@ -81,6 +81,7 @@ func GetAllKyc(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) 
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Need 1 argument")
 	}
+	UserInputBankName := args[0]
 	BankList, err := GetBankList(stub)
 	if err != nil {
 		return nil, err
@@ -91,7 +92,7 @@ func GetAllKyc(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) 
 	for _, BankName := range BankList {
 		UserList, _ := GetUserList(stub, BankName)
 		for _, UserId := range UserList {
-			KycDetails, _ = GetBankSpecificKYCDetails(stub, UserId, BankName)
+			KycDetails, _ = GetBankSpecificKYCDetails(stub, UserId, UserInputBankName)
 			KycList = append(KycList, KycDetails)
 		}
 	}
