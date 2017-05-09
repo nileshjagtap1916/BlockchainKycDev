@@ -158,6 +158,8 @@ func GetBankSpecificKYCDetails(stub shim.ChaincodeStubInterface, UserId string, 
 
 	if KycDataObj.KYC_BANK_NAME == BankName {
 		KycDataObj.KYC_INFO = row.Columns[6].GetString_()
+	} else {
+		KycDataObj.KYC_INFO = ""
 	}
 	return KycDataObj, nil
 }
