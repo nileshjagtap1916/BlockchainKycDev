@@ -263,7 +263,7 @@ func UpdateKyc(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) 
 	KycDetails.USER_NAME = args[1]
 	KycDetails.KYC_DOC_BLOB = args[2]
 	CurrentDate := time.Now().Local()
-	KycDetails.KYC_VALID_TILL_DATE = CurrentDate.AddDate(2, 0, 0).Format("02 Jan 2006")
+	KycDetails.KYC_VALID_TILL_DATE = CurrentDate.AddDate(1, 0, -1).Format("02 Jan 2006")
 
 	//Update data into blockchain
 	ok, err = UpdateKycDetails(stub, KycDetails)
