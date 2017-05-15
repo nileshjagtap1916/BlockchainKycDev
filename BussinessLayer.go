@@ -29,7 +29,7 @@ func SaveKycDetails(stub shim.ChaincodeStubInterface, args []string) ([]byte, er
 	KycDetails.KYC_INFO = args[4]
 	CurrentDate := time.Now().Local()
 	KycDetails.KYC_CREATE_DATE = CurrentDate.Format("02 Jan 2006")
-	KycDetails.KYC_VALID_TILL_DATE = CurrentDate.AddDate(2, 0, -1).Format("02 Jan 2006")
+	KycDetails.KYC_VALID_TILL_DATE = CurrentDate.AddDate(1, 0, -1).Format("02 Jan 2006")
 
 	//save data into blockchain
 	ok, err = InsertKYCDetails(stub, KycDetails)
